@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
-
+import { ArrowRight, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 const ContactSection = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -10,11 +11,23 @@ const ContactSection = () => {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Placeholder — integrate with backend or email service
-    alert("Thank you! We'll be in touch within 24 hours.");
-    setFormData({ name: "", email: "", company: "", message: "" });
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+        body: formData,
+      });
+      if (error) throw error;
+      toast.success("Message sent! We'll be in touch within 24 hours.");
+      setFormData({ name: "", email: "", company: "", message: "" });
+    } catch (err: any) {
+      toast.error("Something went wrong. Please email us directly.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -91,8 +104,9 @@ const ContactSection = () => {
                 placeholder="Tell us about your project, goals, or challenges..."
               />
             </div>
-            <Button type="submit" variant="hero" size="lg" className="w-full">
-              Send Message <ArrowRight className="ml-2 h-5 w-5" />
+            <Button type="submit" variant="hero" size="lg" className="w-full" disabled={loading}>
+              {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <ArrowRight className="ml-2 h-5 w-5" />}
+              {loading ? "Sending..." : "Send Message"}
             </Button>
           </form>
         </div>
