@@ -5,9 +5,9 @@ const projects = [
     result: "3x increase in online sales within 60 days",
   },
   {
-    title: "Fitness Brand Influencer Campaign",
-    category: "Influencer Marketing",
-    result: "500K+ reach with 8.2% engagement rate",
+    title: "Professional Services Firm Website",
+    category: "Website Development",
+    result: "65% increase in qualified enquiries in 90 days",
   },
   {
     title: "SaaS Platform Landing Page",
